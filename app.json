@@ -1,0 +1,43 @@
+{
+  "pages": [
+    "pages/home/perdetail/perdetail",
+    "pages/home/home",   
+    "pages/index/index",
+    "pages/index/detail/index",
+    "pages/logs/logs",
+    "pages/new/new",
+    "pages/home/register/register"
+
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "0CAA41",
+    "navigationBarTitleText": "高校权益中心"
+  },
+  "tabBar": {
+    "color": "#333",
+    "selectedColor": "#1aad19",
+    "backgroundColor": "#eee",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "image/icon/article.png",
+        "selectedIconPath": "image/icon/article-1.png",
+        "text": "帖子"
+      },
+      {
+        "pagePath": "pages/new/new",
+        "iconPath": "image/icon/add.png",
+        "selectedIconPath": "image/icon/add-1.png",
+        "text": "发帖"
+      },
+      {
+        "pagePath": "pages/home/perdetail/perdetail",
+        "iconPath": "image/icon/user.png",
+        "selectedIconPath": "image/icon/user-1.png",
+        "text": "我的"
+      }
+    ]
+  }
+}
