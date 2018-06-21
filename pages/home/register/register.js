@@ -19,10 +19,14 @@ Page({
       email: value["userEm"],
     }
     Bmob.User.register(params).then(res => {
-      console.log(res)
+      console.log('注册成功',res)
+      wx.reLaunch({
+        url: '../login/login',
+      })
     }).catch(err => {
       console.log(err)
     });
+
   },
   /**
    * 生命周期函数--监听页面加载

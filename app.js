@@ -14,17 +14,21 @@ App({
 
   onLaunch:function(){
 
+    var that=this
+
     let current = Bmob.User.current()
-    if (current) {
-      this.globalData.userInfo = current
-      console.log('有用户', this.globalData.userInfo)
+
+    this.globalData.userInfo = current
+    
+    if (that.globalData.userInfo) {    
+      console.log('有用户且已登录', that.globalData.userInfo)
     } else {
-      console.log('无用户')
+      console.log('无用户，或用户已退出登录')
     } 
   },
 
     globalData: {
-    userInfo: null
+    userInfo: null,
     }
 
   // onLaunch: function () {

@@ -8,52 +8,31 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    uInfo:app.globalData.userInfo,
   },
 
-  //登录
-  formSubmit: function(e) {
-    var value = e.detail.value
-    console.log('form发生了submit事件，携带数据为：', value)
-    Bmob.User.login(value["userId"], value["userPw"]).then(res => {
-      console.log(res)
-      console.log('跳到index')
-
-      wx.switchTab({
-        url: '/pages/index/index'
-
-      })
-
-    }).catch(err => {
-      console.log(err)
-      wx.showToast({
-        title: '用户名或密码输入错误',
-        icon: 'none',
-        duration: 2000
-      })
+  //切换账号
+  userchange: function(e){
+    console.log("用户切换账号")
+    app.globalData.userInfo = null
+    console.log(app.globalData.userInfo)
+    wx.redirectTo({
+      url: 'login/login',
     })
   },
-
-  register: function(e) {
-    console.log('跳到注册')
-    wx.navigateTo({
-      url: 'register/register'
-    })
-  },
-
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-      var uInfo=app.globalData.userInfo
-      if (uInfo) {
-        console.log('存在用户，显示详情', uInfo)
+      this.data.uInfo = app.globalData.userInfo
+      if (this.data.uInfo) {
+        console.log('存在用户，显示详情', this.data.uInfo)
       }
       else{
         console.log('无用户，进入登录注册界面')
         wx.navigateTo({
-          url: 'home',
+          url: 'login/login',
         })
       }
 
@@ -70,7 +49,8 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-
+    this.setData({ 'uInfo': app.globalData.userInfo})
+    console.log('onshow',this.data.uInfo)
   },
 
   /**
@@ -106,5 +86,6 @@ Page({
    */
   onShareAppMessage: function() {
 
-  }
+  },
+
 })

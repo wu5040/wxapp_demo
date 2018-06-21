@@ -1,13 +1,12 @@
 {
   "pages": [
-    "pages/home/perdetail/perdetail",
-    "pages/home/home",   
     "pages/index/index",
+    "pages/home/home",
     "pages/index/detail/index",
     "pages/logs/logs",
     "pages/new/new",
-    "pages/home/register/register"
-
+    "pages/home/register/register",
+    "pages/home/login/login"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -33,7 +32,7 @@
         "text": "发帖"
       },
       {
-        "pagePath": "pages/home/perdetail/perdetail",
+        "pagePath": "pages/home/home",
         "iconPath": "image/icon/user.png",
         "selectedIconPath": "image/icon/user-1.png",
         "text": "我的"
