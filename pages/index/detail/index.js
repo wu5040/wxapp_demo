@@ -1,5 +1,5 @@
 // pages/index/detail/index.js
-var Bmob = require('../../../utils/bmob.js');
+var Bmob = require('../../../utils/Bmob-1.6.0.min.js');
 Page({
   data: {
     rows: {}
@@ -15,23 +15,19 @@ Page({
     //   return false;
     // }
 
-    var Text = Bmob.Object.extend("text");
-    var query = new Bmob.Query(Text);
+    //获取一行数据、
+    const query = Bmob.Query('text');
+    query.get(objectId).then(res => {
 
-    query.get(objectId, {
-      success: function (result) {
-        console.log(result, result.id);
+      console.log(res)
+      that.setData({
+        rows: res,
+      })
 
-        that.setData({
-          rows: result,
-
-        })
-        // The object was retrieved successfully.        
-      },
-      error: function (result, error) {
-        console.log("查询失败");
-      }
-    });
+    }).catch(err => {
+      console.log(err)
+    })
+    
   },
   onReady: function () {
     // 页面渲染完成

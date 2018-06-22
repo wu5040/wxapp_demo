@@ -16,15 +16,61 @@ Page({
     modifyDiarys: false
   },
 
-  onReady: function (e) {
+  onReady: function(e) {
 
+    console.log('e:',e)
     const query = Bmob.Query("text");
     query.find().then(res => {
       console.log(res)
-      this.setData(
-        {'textList':res}
-      )
+      this.setData({
+        'textList': res
+      })
       console.log('textList:', this.data.textList)
+
+      //用户和帖子一对多
+      const relation = Bmob.Relation('text') // 需要关联的表
+      const relID1 = relation.add(['5wbP888B', 'q8p3PPP1']) //关联表中需要关联的objectId, 返回一个Relation对象, add方法接受string和array的类型参数
+      const relID2 = relation.add(['I5RuJJJb', 'vCmIBBBb'])
+      const query = Bmob.Query('_User')
+      // query.get('22aadbd32e').then(res => {
+      //   res.set('two', relID1); // 将Relation对象保存到two字段中，即实现了一对多的关联
+      //   res.save()
+      //   console.log('关联后', res)
+      // })
+
+      var writer = null
+      query.get('24296c4455').then(res => {
+        // res.set('two', relID2); // 将Relation对象保存到two字段中，即实现了一对多的关联
+        // res.save()
+        writer=res.username
+        console.log('1关联后', writer,res)
+      })
+
+      const pointer = Bmob.Pointer('_User')
+      const poiID = pointer.set('24296c4455')
+      const query2 = Bmob.Query('text')
+      query2.get('I5RuJJJb').then(res => {
+        res.set('own', poiID)
+        res.set('writer', writer)
+        res.save()
+        console.log('2关联后', res)
+      })
+      query2.get('vCmIBBBb').then(res => {
+        res.set('own', poiID)
+        res.save()
+        console.log('3关联后', res)
+      })
+
+
+
+
+      // //查询Relation
+      // query.field('two','22aadbd32e')
+      // query.relation('text').then(res => {
+      //   console.log('查询关联',res);
+      // })
+
+
     });
     // var Text = Bmob.Object.extend("text");
     // var query = new Bmob.Query(Text);
@@ -107,11 +153,11 @@ Page({
     //   });
 
   },
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
     return {
       title: '自定义转发标题',
       path: '/page/user?id=123',
-      success: function (res) {
+      success: function(res) {
         // 转发成功
         console.log('成功', res)
 
@@ -122,36 +168,42 @@ Page({
             //内部调用云端代码
             var currentUser = Bmob.User.current();
             var data = {
-              "objectId": currentUser.id, "encryptedData": res.encryptedData, "iv": res.iv
+              "objectId": currentUser.id,
+              "encryptedData": res.encryptedData,
+              "iv": res.iv
             };
             console.log(data);
 
             // console.log(data);
-            Bmob.Cloud.run('getOpenGId', data).then(function (obj) {
+            Bmob.Cloud.run('getOpenGId', data).then(function(obj) {
               // var res = JSON.parse(obj)
               console.log(obj)
-            }, function (err) {
+            }, function(err) {
               console.log(err)
             });
 
-            data = { "objectId": currentUser.id, "encryptedData": "Q3h+kMwbKZ52BsxgNT4GS5LTYeLLGIXnA/BZrg/9iMJBD5Qv3Fs5H66xe9ml7iNIsOBEtaeUG0InAxbZOhn1qEeAJ2aC3wYpjARR4pCYA1v87+bj9khaUDY6pvaKX5/4TFHrofKAmA0gTT6bSaHyiw==", "iv": "YHoSkWomdfiyvAWHoYvKiQ==" };
+            data = {
+              "objectId": currentUser.id,
+              "encryptedData": "Q3h+kMwbKZ52BsxgNT4GS5LTYeLLGIXnA/BZrg/9iMJBD5Qv3Fs5H66xe9ml7iNIsOBEtaeUG0InAxbZOhn1qEeAJ2aC3wYpjARR4pCYA1v87+bj9khaUDY6pvaKX5/4TFHrofKAmA0gTT6bSaHyiw==",
+              "iv": "YHoSkWomdfiyvAWHoYvKiQ=="
+            };
             console.log(data);
-            Bmob.Cloud.run('getOpenGId', data).then(function (obj) {
+            Bmob.Cloud.run('getOpenGId', data).then(function(obj) {
               // var res = JSON.parse(obj)
               console.log(obj)
-            }, function (err) {
+            }, function(err) {
               console.log(err)
             });
 
           }
         })
       },
-      fail: function (res) {
+      fail: function(res) {
         // 转发失败
       }
     }
   },
-  onLoad: function () {
+  onLoad: function() {
 
 
     that = this;
@@ -165,29 +217,14 @@ Page({
     var newUrl = k.replace("http://bmob-cdn-12917.b0.upaiyun.com", "https://bmob-cdn-12917.bmobcloud.com")
 
     console.log(newUrl);
-
-    //批量更新数据
-    // var query = new Bmob.Query('text');
-    // query.find().then(function (todos) {
-    //   todos.forEach(function (todo) {
-    //     todo.set('title', "无需后端编程");
-    //   });
-    //   return Bmob.Object.saveAll(todos);
-    // }).then(function (todos) {
-    //   // 更新成功
-    // }, function (error) {
-    //   // 异常处理
-    // });
-
-
   },
-  noneWindows: function () {
+  noneWindows: function() {
     that.setData({
       writeDiary: "",
       modifyDiarys: ""
     })
   },
-  onShow: function () {
+  onShow: function() {
 
     getList(this);
     wx.getSystemInfo({
@@ -199,30 +236,28 @@ Page({
       }
     })
   },
-  pullUpLoad: function (e) {
+  pullUpLoad: function(e) {
     var limit = that.data.limit + 2
     this.setData({
       limit: limit
     })
     this.onShow()
   },
-  toAddDiary: function () {
+  toAddDiary: function() {
     that.setData({
       writeDiary: true
     })
   },
-  addDiary: function (event) {
+  addDiary: function(event) {
     var title = event.detail.value.title;
     var content = event.detail.value.content;
     var formId = event.detail.formId;
     console.log("event", event)
     if (!title) {
       common.showTip("标题不能为空", "loading");
-    }
-    else if (!content) {
+    } else if (!content) {
       common.showTip("内容不能为空", "loading");
-    }
-    else {
+    } else {
       that.setData({
         loading: true
       })
@@ -237,7 +272,7 @@ Page({
       var Text = Bmob.Object.extend("text");
       var text = new Text();
       text.set("title", title);
-      text.set("formId", formId);//保存formId
+      text.set("formId", formId); //保存formId
       text.set("content", content);
       var f = Bmob.File("a.jpg", [""]);
       text.set("f", f);
@@ -247,7 +282,7 @@ Page({
       }
       //添加数据，第一个入口参数是null
       text.save(null, {
-        success: function (result) {
+        success: function(result) {
           // 添加成功，返回成功之后的objectId（注意：返回的属性名字是id，不是objectId），你还可以在Bmob的Web管理后台看到对应的数据
           common.showTip('添加日记成功');
           that.setData({
@@ -321,11 +356,11 @@ Page({
             }
           }
           console.log(temp);
-          Bmob.sendMasterMessage(temp).then(function (obj) {
+          Bmob.sendMasterMessage(temp).then(function(obj) {
             console.log('发送成功');
 
 
-          }, function (err) {
+          }, function(err) {
 
             common.showTip('失败' + err);
           });
@@ -334,7 +369,7 @@ Page({
 
           that.onShow()
         },
-        error: function (result, error) {
+        error: function(result, error) {
           // 添加失败
           common.showTip('添加日记失败，请重新发布', 'loading');
 
@@ -343,12 +378,12 @@ Page({
     }
 
   },
-  closeLayer: function () {
+  closeLayer: function() {
     that.setData({
       writeDiary: false
     })
   },
-  deleteDiary: function (event) {
+  deleteDiary: function(event) {
 
 
     var that = this;
@@ -359,7 +394,7 @@ Page({
     wx.showModal({
       title: '操作提示',
       content: '确定要删除要日记？',
-      success: function (res) {
+      success: function(res) {
         if (res.confirm) {
           //删除日记
           var Text = Bmob.Object.extend("text");
@@ -376,19 +411,19 @@ Page({
           //创建查询对象，入口参数是对象类的实例
           var query = new Bmob.Query(Text);
           query.get(objectId, {
-            success: function (object) {
+            success: function(object) {
               // The object was retrieved successfully.
               object.destroy({
-                success: function (deleteObject) {
+                success: function(deleteObject) {
                   console.log('删除日记成功');
                   getList(that)
                 },
-                error: function (object, error) {
+                error: function(object, error) {
                   console.log('删除日记失败');
                 }
               });
             },
-            error: function (object, error) {
+            error: function(object, error) {
               console.log("query object fail");
             }
           });
@@ -396,7 +431,7 @@ Page({
       }
     })
   },
-  toModifyDiary: function (event) {
+  toModifyDiary: function(event) {
     var nowTile = event.target.dataset.title;
     var nowContent = event.target.dataset.content;
     var nowId = event.target.dataset.id;
@@ -407,36 +442,36 @@ Page({
       nowId: nowId
     })
   },
-  modifyDiary: function (e) {
+  modifyDiary: function(e) {
     var t = this;
     modify(t, e)
   },
-  showInput: function () {
+  showInput: function() {
     this.setData({
       inputShowed: true
     });
   },
-  hideInput: function () {
+  hideInput: function() {
     this.setData({
       inputVal: "",
       inputShowed: false
     });
     getList(this);
   },
-  clearInput: function () {
+  clearInput: function() {
     this.setData({
       inputVal: ""
     });
     getList(this);
   },
-  inputTyping: function (e) {
+  inputTyping: function(e) {
     //搜索数据
     getList(this, e.detail.value);
     this.setData({
       inputVal: e.detail.value
     });
   },
-  closeAddLayer: function () {
+  closeAddLayer: function() {
     that.setData({
       modifyDiarys: false
     })
@@ -446,8 +481,8 @@ Page({
 
 
 /*
-* 获取数据
-*/
+ * 获取数据
+ */
 function getList(t, k) {
   that = t;
 
@@ -461,7 +496,7 @@ function getList(t, k) {
   // }
 
   //普通会员匹配查询
-   //query.equalTo("title", k);
+  //query.equalTo("title", k);
 
   query.order('-createdAt');
   query.include("own")
@@ -506,20 +541,19 @@ function modify(t, e) {
   if ((modyTitle != thatTitle || modyContent != thatContent)) {
     if (modyTitle == "" || modyContent == "") {
       common.showTip('标题或内容不能为空', 'loading');
-    }
-    else {
+    } else {
       console.log(modyContent)
       var Text = Bmob.Object.extend("text");
       var query = new Bmob.Query(Text);
       // 这个 id 是要修改条目的 id，你在生成这个存储并成功时可以获取到，请看前面的文档
       query.get(that.data.nowId, {
-        success: function (result) {
+        success: function(result) {
 
           // 回调中可以取得这个 GameScore 对象的一个实例，然后就可以修改它了
           result.set('title', modyTitle);
           result.set('content', modyContent);
           result.save();
-          common.showTip('日记修改成功', 'success', function () {
+          common.showTip('日记修改成功', 'success', function() {
             that.onShow();
             that.setData({
               modifyDiarys: false
@@ -528,16 +562,14 @@ function modify(t, e) {
 
           // The object was retrieved successfully.
         },
-        error: function (object, error) {
+        error: function(object, error) {
 
         }
       });
     }
-  }
-  else if (modyTitle == "" || modyContent == "") {
+  } else if (modyTitle == "" || modyContent == "") {
     common.showTip('标题或内容不能为空', 'loading');
-  }
-  else {
+  } else {
     that.setData({
       modifyDiarys: false
     })
